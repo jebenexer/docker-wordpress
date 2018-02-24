@@ -23,7 +23,7 @@ file_env() {
 	unset "$fileVar"
 }
 
-if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
+if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ] ||  [ "$1" == dumb-init ]; then
 	if [ "$(id -u)" = '0' ]; then
 		case "$1" in
 			apache2*)
