@@ -86,13 +86,7 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 		NONCE_SALT
 	)
 	envs=(
-		WORDPRESS_DB_HOST
-		WORDPRESS_DB_USER
-		WORDPRESS_DB_PASSWORD
-		WORDPRESS_DB_NAME
 		"${uniqueEnvs[@]/#/WORDPRESS_}"
-		WORDPRESS_TABLE_PREFIX
-		WORDPRESS_DEBUG
 	)
 	haveConfig=
 	for e in "${envs[@]}"; do
