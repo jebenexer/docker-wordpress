@@ -133,7 +133,14 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ] ||  [ "$1" == dumb-init ]; then
 // see also http://codex.wordpress.org/Administration_Over_SSL#Using_a_Reverse_Proxy
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
 	$_SERVER['HTTPS'] = 'on';
+	$s = 's';
 }
+
+foreach (array('WP_HOME', 'WP_SITEURL') as $const) {
+    define($const, 'http'.$s.'://'.$_SERVER['HTTP_HOST'].'/');
+}
+
+
 
 EOPHP
 			chown "$user:$group" wp-config.php
