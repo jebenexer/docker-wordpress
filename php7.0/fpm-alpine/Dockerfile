@@ -14,10 +14,10 @@ RUN set -ex; \
 	\
 	apk add --no-cache --virtual .build-deps \
 		libjpeg-turbo-dev \
-		libpng-dev \
+		libpng-dev freetype-dev \
 	; \
 	\
-	docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr; \
+	docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-png-dir=/usr --with-jpeg-dir=/usr; \
 	docker-php-ext-install gd mysqli opcache; \
 	\
 	runDeps="$( \
