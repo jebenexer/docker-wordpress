@@ -5,7 +5,12 @@ RUN apk add --no-cache \
 # in theory, docker-entrypoint.sh is POSIX-compliant, but priority is a working, consistent image
 		bash \
 # BusyBox sed is not sufficient for some of our sed expressions
-		sed
+		sed \
+		# lets be able to send email
+		ssmtp
+		
+RUN sed -ri -e 's/^(mailhub=).*/\1smtp-server/' /etc/ssmtp/ssmtp.conf && \
+    echo FromLineOverride >> /etc/ssmtp/ssmtp.conf
 
 # install the PHP extensions we need
 RUN set -ex; \
