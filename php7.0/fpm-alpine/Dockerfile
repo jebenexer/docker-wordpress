@@ -42,7 +42,7 @@ RUN { \
 
 VOLUME /var/www/html
 
-ARG WORDPRESS_VERSION=4.9.4
+ARG WORDPRESS_VERSION=4.9.8
 
 RUN set -ex; \
 	curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"; \
@@ -56,5 +56,5 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 
 RUN mkdir -p /run/nginx
 
-CMD ["dumb-init", "bash", "-c", "nginx & php-fpm"]
 ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["dumb-init", "bash", "-c", "nginx & php-fpm"]

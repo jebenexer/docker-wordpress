@@ -5,18 +5,21 @@ RUN apk add --no-cache \
 # in theory, docker-entrypoint.sh is POSIX-compliant, but priority is a working, consistent image
 		bash \
 # BusyBox sed is not sufficient for some of our sed expressions
-		sed
+		sed \
+    nginx \
+    dumb-init
+
 
 # install the PHP extensions we need
 RUN set -ex; \
 	\
 	apk add --no-cache --virtual .build-deps \
 		libjpeg-turbo-dev \
-		libpng-dev \
+		libpng-dev freetype-dev \
 	; \
 	\
 	docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr; \
-	docker-php-ext-install gd mysqli opcache; \
+	docker-php-ext-install gd mysql mysqli opcache; \
 	\
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
@@ -40,18 +43,19 @@ RUN { \
 
 VOLUME /var/www/html
 
-ENV WORDPRESS_VERSION 4.9.4
-ENV WORDPRESS_SHA1 0e630bf940fd586b10e099cd9195b3e825fb194c
+ENV WORDPRESS_VERSION 4.9.8
 
 RUN set -ex; \
 	curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"; \
-	echo "$WORDPRESS_SHA1 *wordpress.tar.gz" | sha1sum -c -; \
 # upstream tarballs include ./wordpress/ so this gives us /usr/src/wordpress
 	tar -xzf wordpress.tar.gz -C /usr/src/; \
 	rm wordpress.tar.gz; \
 	chown -R www-data:www-data /usr/src/wordpress
 
 COPY docker-entrypoint.sh /usr/local/bin/
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+RUN mkdir -p /run/nginx
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["php-fpm"]
+CMD ["dumb-init", "bash", "-c", "nginx & php-fpm"]
