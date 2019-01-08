@@ -27,6 +27,9 @@ RUN set -ex; \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
 	apk add --virtual .wordpress-phpexts-rundeps $runDeps; \
+  curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+  chmod +x ./wp-cli.phar && \
+  mv ./wp-cli.phar /usr/bin/wp; \
 	apk del .build-deps
 
 # set recommended PHP.ini settings

@@ -23,7 +23,14 @@ file_env() {
 	unset "$fileVar"
 }
 
-if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ] ||  [ "$1" == dumb-init ]; then
+adduser -DHu $(stat -c %u /var/www/html) webapp
+sed -i "s/^user\b.*;/user $(stat -c %U /var/www/html);/" /etc/nginx/nginx.conf
+sed -i "s/^user\b.*=.*\$/user = $(stat -c %U /var/www/html);/" /usr/local/etc/php-fpm.d/www.conf
+sed -i "s/^group\b.*=.*\$/group = $(stat -c %U /var/www/html);/" /usr/local/etc/php-fpm.d/www.conf
+
+chown webapp.webapp -R /var/tmp/nginx/
+
+if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ] || [ "$1" == dumb-init ]; then
 	if [ "$(id -u)" = '0' ]; then
 		case "$1" in
 			apache2*)
